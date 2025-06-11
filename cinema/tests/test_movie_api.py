@@ -4,7 +4,7 @@ from rest_framework.test import APIClient
 from rest_framework import status
 
 from cinema.serializers import MovieSerializer
-from cinema.models import Genre
+from cinema.models import Movie
 from cinema.views import MovieViewSet
 from rest_framework.viewsets import ModelViewSet
 
@@ -12,12 +12,12 @@ from rest_framework.viewsets import ModelViewSet
 class MovieApiTests(TestCase):
     def setUp(self):
         self.client = APIClient()
-        Genre.objects.create(
+        Movie.objects.create(
             title="Titanic",
             description="Titanic description",
             duration=200,
         )
-        Genre.objects.create(
+        Movie.objects.create(
             title="Batman",
             description="Batman description",
             duration=190,
@@ -28,7 +28,7 @@ class MovieApiTests(TestCase):
 
     def test_get_movies(self):
         movies = self.client.get("/api/cinema/movies/")
-        serializer = MovieSerializer(Genre.objects.all(), many=True)
+        serializer = MovieSerializer(Movie.objects.all(), many=True)
         self.assertEqual(movies.status_code, status.HTTP_200_OK)
         self.assertEqual(movies.data, serializer.data)
 
@@ -41,7 +41,7 @@ class MovieApiTests(TestCase):
                 "duration": 170,
             },
         )
-        db_movies = Genre.objects.all()
+        db_movies = Movie.objects.all()
         self.assertEqual(movies.status_code, status.HTTP_201_CREATED)
         self.assertEqual(db_movies.count(), 3)
         self.assertEqual(db_movies.filter(title="Superman").count(), 1)
@@ -55,14 +55,14 @@ class MovieApiTests(TestCase):
                 "duration": "two hundred",
             },
         )
-        superman_movies = Genre.objects.filter(title="Superman")
+        superman_movies = Movie.objects.filter(title="Superman")
         self.assertEqual(movies.status_code, status.HTTP_400_BAD_REQUEST)
         self.assertEqual(superman_movies.count(), 0)
 
     def test_get_movie(self):
         response = self.client.get("/api/cinema/movies/2/")
         serializer = MovieSerializer(
-            Genre(
+            Movie(
                 id=2,
                 title="Batman",
                 description="Batman description",
@@ -85,7 +85,7 @@ class MovieApiTests(TestCase):
                 "duration": 190,
             },
         )
-        db_movie = Genre.objects.get(id=1)
+        db_movie = Movie.objects.get(id=1)
         self.assertEqual(
             [db_movie.title, db_movie.description, db_movie.duration],
             [
@@ -105,7 +105,7 @@ class MovieApiTests(TestCase):
                 "duration": "fifty",
             },
         )
-        db_movie = Genre.objects.get(id=1)
+        db_movie = Movie.objects.get(id=1)
         self.assertEqual(db_movie.duration, 200)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -116,7 +116,7 @@ class MovieApiTests(TestCase):
                 "title": "Watchmen",
             },
         )
-        db_movie = Genre.objects.get(id=1)
+        db_movie = Movie.objects.get(id=1)
         self.assertEqual(db_movie.title, "Watchmen")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
@@ -127,7 +127,7 @@ class MovieApiTests(TestCase):
                 "duration": "fifty",
             },
         )
-        db_movie = Genre.objects.get(id=1)
+        db_movie = Movie.objects.get(id=1)
         self.assertEqual(db_movie.duration, 200)
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
@@ -135,7 +135,7 @@ class MovieApiTests(TestCase):
         response = self.client.delete(
             "/api/cinema/movies/1/",
         )
-        db_movies_id_1 = Genre.objects.filter(id=1)
+        db_movies_id_1 = Movie.objects.filter(id=1)
         self.assertEqual(db_movies_id_1.count(), 0)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
 
