@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from cinema.models import Movie
+from cinema.models import Genre
 
 
-@admin.register(Movie)
+@admin.register(Genre)
 class MovieAdmin(admin.ModelAdmin):
     pass
