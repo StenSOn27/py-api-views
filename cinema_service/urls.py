@@ -6,6 +6,6 @@ urlpatterns = [
     path(
         "api/cinema/",
         include("cinema.urls"),
-        namespace="cinema"
+        name="cinema"
     ),
 ]
