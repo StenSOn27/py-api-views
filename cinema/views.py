@@ -5,7 +5,10 @@ from django.shortcuts import get_object_or_404
 
 from .models import Actor, Genre, CinemaHall, Movie
 from cinema.serializers import (
-    MovieSerializer, GenreSerializer, ActorSerializer, CinemaHallSerializer
+    MovieSerializer,
+    GenreSerializer,
+    ActorSerializer,
+    CinemaHallSerializer,
 )
 
 
@@ -31,10 +34,10 @@ class GenreDetail(APIView):
         genre = self.get_object(pk=pk)
         serializer = GenreSerializer(genre)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    
-    def post(self, request, pk) -> Response:
+
+    def put(self, request, pk) -> Response:
         genre = self.get_object(pk=pk)
-        serializer = MovieSerializer(genre, data=request.data)
+        serializer = GenreSerializer(genre, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -50,35 +53,35 @@ class GenreDetail(APIView):
 class ActorList(
     generics.GenericAPIView,
     mixins.ListModelMixin,
-    mixins.CreateModelMixin,    
+    mixins.CreateModelMixin,
 ):
     queryset = Actor.objects.all()
     serializer_class = ActorSerializer
 
     def get(self, request, *args, **kwargs) -> Response:
         return self.list(self, request, *args, **kwargs)
-    
+
     def post(self, request, *args, **kwargs) -> Response:
         return self.create(self, request, *args, **kwargs)
-    
+
 
 class ActorDetail(
-   mixins.RetrieveModelMixin,
-   mixins.UpdateModelMixin,
-   mixins.DestroyModelMixin,
-   generics.GenericAPIView
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView,
 ):
-   queryset = Actor.objects.all()
-   serializer_class = ActorSerializer
+    queryset = Actor.objects.all()
+    serializer_class = ActorSerializer
 
-   def get(self, request, *args, **kwargs):
-       return self.retrieve(request, *args, **kwargs)
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
 
-   def put(self, request, *args, **kwargs):
-       return self.update(request, *args, **kwargs)
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
 
-   def delete(self, request, *args, **kwargs):
-       return self.destroy(request, *args, **kwargs)
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
 class CinemaHallViewSet(
@@ -87,7 +90,7 @@ class CinemaHallViewSet(
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
-    viewsets.GenericViewSet
+    viewsets.GenericViewSet,
 ):
     queryset = CinemaHall.objects.all()
     serializer_class = CinemaHallSerializer

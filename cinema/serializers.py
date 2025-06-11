@@ -11,8 +11,12 @@ class ActorSerializer(serializers.Serializer):
         return Actor.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
-        instance.first_name = validated_data.get("first_name", instance.first_name)
-        instance.last_name = validated_data.get("last_name", instance.last_name)
+        instance.first_name = validated_data.get(
+            "first_name", instance.first_name
+        )
+        instance.last_name = validated_data.get(
+            "last_name", instance.last_name
+        )
         instance.save()
         return instance
 
@@ -48,8 +52,6 @@ class CinemaHallSerializer(serializers.Serializer):
         instance.save()
         return instance
 
-from rest_framework import serializers
-from .models import Movie, Genre, Actor
 
 class MovieSerializer(serializers.Serializer):
     id = serializers.IntegerField(read_only=True)
@@ -57,23 +59,23 @@ class MovieSerializer(serializers.Serializer):
     description = serializers.CharField()
     duration = serializers.IntegerField()
     genres = serializers.ListField(
-        child=serializers.IntegerField(), write_only=True
+        child=serializers.IntegerField(), write_only=True, required=False
     )
     actors = serializers.ListField(
-        child=serializers.IntegerField(), write_only=True
+        child=serializers.IntegerField(), write_only=True, required=False
     )
 
     def create(self, validated_data):
-        genres_data = validated_data.pop('genres', [])
-        actors_data = validated_data.pop('actors', [])
+        genres_data = validated_data.pop("genres", [])
+        actors_data = validated_data.pop("actors", [])
         movie = Movie.objects.create(**validated_data)
         movie.genres.set(Genre.objects.filter(id__in=genres_data))
         movie.actors.set(Actor.objects.filter(id__in=actors_data))
         return movie
 
     def update(self, instance, validated_data):
-        genres_data = validated_data.pop('genres', None)
-        actors_data = validated_data.pop('actors', None)
+        genres_data = validated_data.pop("genres", None)
+        actors_data = validated_data.pop("actors", None)
 
         for attr, value in validated_data.items():
             setattr(instance, attr, value)

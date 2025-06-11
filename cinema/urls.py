@@ -19,7 +19,7 @@ cinemahall_list = CinemaHallViewSet.as_view(actions={
 })
 
 cinemahall_detail = CinemaHallViewSet.as_view(actions={
-    "get": "retrive",
+    "get": "retrieve",
     "put": "update",
     "patch": "partial_update",
     "delete": "destroy",
